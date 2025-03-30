@@ -2,10 +2,15 @@
 #include <HTTPClient.h>
 #include "credentials.h"
 
-boolean debug = false;
+boolean debug = true;
 
 void setup() {
   if (debug) { Serial.begin(115200); }
+
+
+
+
+
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   if (debug) { Serial.println("Connecting"); }
@@ -37,10 +42,18 @@ void setup() {
     if (debug) { Serial.println(httpResponseCode); }
     // Free resources
     http.end();
+    WiFi.disconnect();
   }
   else {
     if (debug) { Serial.println("WiFi Disconnected"); }
   }
+
+
+  if (debug) { Serial.println("Going to sleep now..."); }
+  touchSleepWakeUpEnable(T3, THRESHOLD);
+  esp_deep_sleep_start();
+
+
 }
 
 void loop() {
