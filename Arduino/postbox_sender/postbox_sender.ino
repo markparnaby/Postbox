@@ -2,32 +2,45 @@
 #include <HTTPClient.h>
 #include "credentials.h"
 
+boolean debug = false;
+
 void setup() {
-  Serial.begin(115200); 
+  if (debug) { Serial.begin(115200); }
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
-  Serial.println("Connecting");
-  while(WiFi.status() != WL_CONNECTED) {
+  if (debug) { Serial.println("Connecting"); }
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    if (debug) { Serial.print("."); }
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
-
+  if (debug) { Serial.println(""); }
+  if (debug) { Serial.print("Connected to WiFi network with IP Address: "); }
+  if (debug) { Serial.println(WiFi.localIP()); }
   
-  HTTPClient http;
-  String serverPath = SERVER + "api/postbox/state/full";
+  //Check WiFi connection status
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiClient client;
+    HTTPClient http;
 
-  Serial.print("Sending the following as a POST request:");
-  Serial.println(serverPath.c_str());
+    char requestURI[100];
+    strcpy(requestURI, SERVER_ADDRESS);
+    strcat(requestURI, "api/postbox/state/full");
 
-  http.begin(serverPath.c_str());
-  int httpResponseCode = http.POST();
+    // Your Domain name with URL path or IP address with path
+    http.begin(client, requestURI);
+    
+    // Data to send with HTTP POST
+    if (debug) { Serial.println(requestURI); }
 
-  
-  Serial.print("Response:");
-  Serial.println(httpResponseCode);
+    // Send HTTP POST request
+    int httpResponseCode = http.POST("");
+    if (debug) { Serial.println(httpResponseCode); }
+    // Free resources
+    http.end();
+  }
+  else {
+    if (debug) { Serial.println("WiFi Disconnected"); }
+  }
 }
 
 void loop() {
