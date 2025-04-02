@@ -50,7 +50,9 @@ void setup() {
 
 
   if (debug) { Serial.println("Going to sleep now..."); }
-  touchSleepWakeUpEnable(T3, THRESHOLD);
+  //delay(500);
+  touchSleepWakeUpEnable(T3, THRESHOLD); // Touch on pin 15
+  //esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 1); // Connect to ground on pin 15 (button)
   esp_deep_sleep_start();
 
 
