@@ -1,16 +1,12 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include "credentials.h"
+#include <WiFiClientSecure.h>
 
-boolean debug = true;
+boolean debug = false;
 
 void setup() {
   if (debug) { Serial.begin(115200); }
-
-
-
-
-
 
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   if (debug) { Serial.println("Connecting"); }
@@ -24,7 +20,7 @@ void setup() {
   
   //Check WiFi connection status
   if (WiFi.status() == WL_CONNECTED) {
-    WiFiClient client;
+    WiFiClientSecure client;
     HTTPClient http;
 
     char requestURI[100];
@@ -32,14 +28,20 @@ void setup() {
     strcat(requestURI, "api/postbox/state/full");
 
     // Your Domain name with URL path or IP address with path
-    http.begin(client, requestURI);
+    //http.begin(client, requestURI);
+    client.setInsecure();
+    http.begin(client, DISCORD_WEBHOOK);
     
     // Data to send with HTTP POST
-    if (debug) { Serial.println(requestURI); }
+    //if (debug) { Serial.println(requestURI); }
+    if (debug) { Serial.println(DISCORD_WEBHOOK); }
 
     // Send HTTP POST request
-    int httpResponseCode = http.POST("");
+    http.addHeader("Content-Type", "application/json"); 
+    int httpResponseCode = http.POST(DISCORD_POST_DATA);
+    if (debug) { Serial.println(DISCORD_POST_DATA); }
     if (debug) { Serial.println(httpResponseCode); }
+    
     // Free resources
     http.end();
     WiFi.disconnect();
