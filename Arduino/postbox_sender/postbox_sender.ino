@@ -1,4 +1,9 @@
+#ifdef ARDUINO_ARCH_ESP32
 #include <WiFi.h>
+#else
+#include <ESP8266WiFi.h>
+#endif
+
 #include <HTTPClient.h>
 #include "credentials.h"
 #include <WiFiClientSecure.h>
